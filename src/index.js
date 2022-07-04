@@ -1,23 +1,86 @@
 const pokeForm = document.querySelector(".poke-form");
 const pokeList = document.querySelector(".poke-list");
 
-function addPokemon(pokemon) {
-  const liEl = document.createElement("li");
-  const imgEl = document.createElement("img");
-  const h2El = document.createElement("h2");
+const state = []
 
-  liEl.classList.add("pokemon");
-  imgEl.src = pokemon.image;
+const get = () => {
+  fetch("http://localhost:3000/pokemons")
+    .then(function (resp) {
+      console.log("my response", resp);
+      return resp.json();
+    })
 
-  h2El.innerText = pokemon.name;
+    .then(function (data) {
+      console.log("data", data);
+      // do something with the people data here
 
-  liEl.append(imgEl, h2El);
-  pokeList.append(liEl);
-}
+      state.push(data)
+  
+      console.log("state contains", state)
+    })
 
-function addPokemons(pokemons) {
-  pokemons.forEach(pokemon => addPokemon(pokemon))
-}
+    // .then(displayPokemon())
+
+    .then(function() {
+
+      state.forEach((item) => {
+        let pkmLi = document.createElement('li');
+        pkmLi.className = "pokemon"
+    
+        let pkmName = document.createElement('h2')
+        pkmName.innerText = item.name
+    
+        let pkmImg = document.createElement('img')
+        pkmImg.src = item.image
+        pkmImg.alt = item.name
+    
+        pkmLi.append(pkmName, pkmImg)
+        pokeList.append(pkmLi);
+    
+        console.log(pokeList)
+      });
+    
+    })
+};
+
+// const displayPokemon = () => {
+
+//   state.forEach((item) => {
+//     let pkmLi = document.createElement('li');
+//     pkmLi.className = "pokemon"
+
+//     let pkmName = document.createElement('h2')
+//     pkmName.innerText = item.name
+
+//     let pkmImg = document.createElement('img')
+//     pkmImg.src = item.image
+//     pkmImg.alt = item.name
+
+//     pkmLi.append(pkmName, pkmImg)
+//     pokeList.append(pkmLi);
+
+//     console.log(pokeList)
+//   });
+
+// }
+
+// function addPokemon(pokemon) {
+//   const liEl = document.createElement("li");
+//   const imgEl = document.createElement("img");
+//   const h2El = document.createElement("h2");
+
+//   liEl.classList.add("pokemon");
+//   imgEl.src = pokemon.image;
+
+//   h2El.innerText = pokemon.name;
+
+//   liEl.append(imgEl, h2El);
+//   pokeList.append(liEl);
+// }
+
+// function addPokemons(pokemons) {
+//   pokemons.forEach(pokemon => addPokemon(pokemon))
+// }
 
 function listenToAddPokemonForm() {
   pokeForm.addEventListener("submit", function (event) {
@@ -53,3 +116,6 @@ function init() {
 }
 
 init();
+get();
+
+console.log(pokeList)
