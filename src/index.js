@@ -3,7 +3,7 @@ const pokeList = document.querySelector(".poke-list");
 
 const state = []
 
-const get = () => {
+const setStateAndRender = () => {
   fetch("http://localhost:3000/pokemons")
     .then(function (resp) {
       console.log("my response", resp);
@@ -12,14 +12,12 @@ const get = () => {
 
     .then(function (data) {
       console.log("data", data);
-      // do something with the people data here
 
-      state.push(data)
-  
-      console.log("state contains", state)
+      data.forEach((element) => {
+
+        state.push(element)
+      })
     })
-
-    // .then(displayPokemon())
 
     .then(function() {
 
@@ -33,54 +31,44 @@ const get = () => {
         let pkmImg = document.createElement('img')
         pkmImg.src = item.image
         pkmImg.alt = item.name
+
+        let pkmDelete = document.createElement('button')
+        pkmDelete.innerText = "Delete"
+
+        pkmDelete.addEventListener("click", function(event) {
+          event.preventDefault();
+      
+          // DELETE
+          fetch("http://localhost:3000/pokemons/" + `${item.id}`, {
+            method: "DELETE"
+          })
+      
+        })
+
+        let pkmLike = document.createElement('img')
+        pkmLike.src = "./assets/heart-thin.svg"
+        pkmLike.alt = "like button"
+        pkmLike.style.width = "2rem"
+        pkmLike.style.marginLeft = "3.5rem"
+
+        pkmLike.addEventListener("click", function(event) {
+          event.preventDefault();
+
+          if (pkmLike.src ===  "http://127.0.0.1:5500/assets/heart-thin.svg") {
+
+            pkmLike.src = "./assets/red-heart.svg"
+          }
+
+          else pkmLike.src = "./assets/heart-thin.svg"
+        })
     
-        pkmLi.append(pkmName, pkmImg)
+        pkmLi.append(pkmName, pkmImg, pkmDelete, pkmLike)
         pokeList.append(pkmLi);
     
         console.log(pokeList)
       });
-    
     })
 };
-
-// const displayPokemon = () => {
-
-//   state.forEach((item) => {
-//     let pkmLi = document.createElement('li');
-//     pkmLi.className = "pokemon"
-
-//     let pkmName = document.createElement('h2')
-//     pkmName.innerText = item.name
-
-//     let pkmImg = document.createElement('img')
-//     pkmImg.src = item.image
-//     pkmImg.alt = item.name
-
-//     pkmLi.append(pkmName, pkmImg)
-//     pokeList.append(pkmLi);
-
-//     console.log(pokeList)
-//   });
-
-// }
-
-// function addPokemon(pokemon) {
-//   const liEl = document.createElement("li");
-//   const imgEl = document.createElement("img");
-//   const h2El = document.createElement("h2");
-
-//   liEl.classList.add("pokemon");
-//   imgEl.src = pokemon.image;
-
-//   h2El.innerText = pokemon.name;
-
-//   liEl.append(imgEl, h2El);
-//   pokeList.append(liEl);
-// }
-
-// function addPokemons(pokemons) {
-//   pokemons.forEach(pokemon => addPokemon(pokemon))
-// }
 
 function listenToAddPokemonForm() {
   pokeForm.addEventListener("submit", function (event) {
@@ -91,31 +79,26 @@ function listenToAddPokemonForm() {
     };
 
     // CREATE
-    // fetch("http://localhost:3000/pokemons", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json"
-    //   },
-    //   body: JSON.stringify(pokemon)
-    // })
-    //   .then(res =>  res.json())
-    //   .then(pokemon => addPokemon(pokemon));
-    //   });
+    fetch("http://localhost:3000/pokemons", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(pokemon)
+    })
+      .then(res =>  res.json())
+      .then(pokemon => addPokemon(pokemon));
+      });
+}     
 
-    pokeForm.reset();
-  });
-}
+pokeForm.reset();
 
 function init() {
   listenToAddPokemonForm();
-
-  // READ
-  // fetch("http://localhost:3000/pokemons")
-  //   .then(res => res.json());
-  //   .then(pokemons => addPokemons(pokemons));
 }
 
 init();
-get();
+setStateAndRender();
 
+console.log("state contains", state)
 console.log(pokeList)
