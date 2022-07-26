@@ -46,7 +46,7 @@ const setStateAndRender = () => {
         })
 
         let pkmLike = document.createElement('img')
-        pkmLike.src = "./assets/heart-thin.svg"
+        pkmLike.src = item.like
         pkmLike.alt = "like button"
         pkmLike.style.width = "2rem"
         pkmLike.style.marginLeft = "3.5rem"
@@ -54,13 +54,24 @@ const setStateAndRender = () => {
         pkmLike.addEventListener("click", function(event) {
           event.preventDefault();
 
-          if (pkmLike.src ===  "http://127.0.0.1:5500/assets/heart-thin.svg") {
-
-            pkmLike.src = "./assets/red-heart.svg"
-          }
-
-          else pkmLike.src = "./assets/heart-thin.svg"
+          // UPDATE - WORKS WITHOUT LIVE SERVER
+          fetch("http://localhost:3000/pokemons/" + `${item.id}`, {
+            method: 'PATCH',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ like: "./assets/red-heart.svg" })
+          })
         })
+
+        // THIS IS THE PREVIOUS VERSION - IT ONLY WORKED WITH LIVE SERVER
+        //   if (pkmLike.src ===  "http://127.0.0.1:5500/assets/heart-thin.svg") {
+
+        //     pkmLike.src = "./assets/red-heart.svg"
+        //   }
+
+        //   else pkmLike.src = "./assets/heart-thin.svg"
+        // })
     
         pkmLi.append(pkmName, pkmImg, pkmDelete, pkmLike)
         pokeList.append(pkmLi);
